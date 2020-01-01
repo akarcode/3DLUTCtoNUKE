@@ -1,40 +1,70 @@
 ﻿#Requires -Version 5.0
 
 #
-# Akar // 3D LUT Creator to NUKE v1.0.0
+# Akar // 3D LUT Creator to NUKE v1.0.1
 # ----------------------------------
 # http://www.akar.id
 # ----------------------------------
 # by Nick Zimmermann
 # ----------------------------------
 #
+# v1.0.1
+# added topmost checkbox
+# added master curve (luminance)
+# changed GUI to only one status line
+# changed disabled second and third matrix input
 #
-# v1.0.0 (initial release)
+# v1.0 (initial release)
+#
+#
+# TODO:
+# nothing at this point
+#
+# to consider:
+# - checkboxes of what curves to actually copy
+#   This would bloat the script. just delete the curve points in nuke
 #
 
-cls
+
+Clear-Host
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 $Form = New-Object System.Windows.Forms.Form -Property @{
-    Size = New-Object System.Drawing.Size(650,250)
+    Size = New-Object System.Drawing.Size(650,225)
     FormBorderStyle = 'FixedDialog'
-    Text = 'Akar \\ 3D LUT Creator to NUKE v1.0.0'
+    Text = 'Akar \\ 3D LUT Creator to NUKE v1.0.1'
     Toplevel = $true
-    TopMost = $false
+    TopMost = $true
     MaximizeBox = $false
     MinimizeBox = $true
     StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
 }
 
-$GroupBoxSeparator = New-Object System.Windows.Forms.GroupBox -Property @{
-    Location = New-Object System.Drawing.Point(15,70)
+$GroupBoxSeparator00 = New-Object System.Windows.Forms.GroupBox -Property @{
+    Location = New-Object System.Drawing.Point(15,47)
     Size = New-Object System.Drawing.Size(614,2)
     FlatStyle = 'Flat'
 }
-$Form.Controls.Add($GroupBoxSeparator)
+$Form.Controls.Add($GroupBoxSeparator00)
+
+$GroupBoxSeparator01 = New-Object System.Windows.Forms.GroupBox -Property @{
+    Location = New-Object System.Drawing.Point(15,143)
+    Size = New-Object System.Drawing.Size(614,2)
+    FlatStyle = 'Flat'
+}
+$Form.Controls.Add($GroupBoxSeparator01)
+
+$CheckBoxTopMost = New-Object System.Windows.Forms.CheckBox -Property @{
+    Location = New-Object System.Drawing.Point(510,159)
+    Size = New-Object System.Drawing.Size(120,20)
+    Text = 'Always on top'
+    Checked = $true
+    RightToLeft = 'Yes'
+}
+$Form.Controls.Add($CheckBoxTopMost)
 
 $TextBoxLabelCurves = New-Object System.Windows.Forms.Label -Property @{
     Location = New-Object System.Drawing.Point(12,18)
@@ -43,40 +73,26 @@ $TextBoxLabelCurves = New-Object System.Windows.Forms.Label -Property @{
 }
 $Form.Controls.Add($TextBoxLabelCurves)
 
-$TextBoxLabelStatusCurves = New-Object System.Windows.Forms.Label -Property @{
-    Location = New-Object System.Drawing.Point(12,43)
-    Size = New-Object System.Drawing.Size(50,22)
-    Text = 'Status:'
-}
-$Form.Controls.Add($TextBoxLabelStatusCurves)
-
-$TextBoxLabelInfoCurves = New-Object System.Windows.Forms.Label -Property @{
-    Location = New-Object System.Drawing.Point(68,43)
-    Size = New-Object System.Drawing.Size(250,22)
-    Text = ''
-}
-$Form.Controls.Add($TextBoxLabelInfoCurves)
-
 $TextBoxLabelMatrix = New-Object System.Windows.Forms.Label -Property @{
-    Location = New-Object System.Drawing.Point(12,88)
+    Location = New-Object System.Drawing.Point(12,64)
     Size = New-Object System.Drawing.Size(50,22)
     Text = "Matrix:"
 }
 $Form.Controls.Add($TextBoxLabelMatrix)
 
-$TextBoxLabelStatusMatrix = New-Object System.Windows.Forms.Label -Property @{
-    Location = New-Object System.Drawing.Point(12,163)
+$TextBoxLabelStatus = New-Object System.Windows.Forms.Label -Property @{
+    Location = New-Object System.Drawing.Point(12,160)
     Size = New-Object System.Drawing.Size(50,22)
     Text = 'Status:'
 }
-$Form.Controls.Add($TextBoxLabelStatusMatrix)
+$Form.Controls.Add($TextBoxLabelStatus)
 
-$TextBoxLabelInfoMatrix = New-Object System.Windows.Forms.Label -Property @{
-    Location = New-Object System.Drawing.Point(68,163)
+$TextBoxLabelInfo = New-Object System.Windows.Forms.Label -Property @{
+    Location = New-Object System.Drawing.Point(68,160)
     Size = New-Object System.Drawing.Size(250,22)
     Text = ''
 }
-$Form.Controls.Add($TextBoxLabelInfoMatrix)
+$Form.Controls.Add($TextBoxLabelInfo)
 
 
 $TextBoxLightroom = New-Object System.Windows.Forms.TextBox -Property @{
@@ -88,7 +104,7 @@ $TextBoxLightroom = New-Object System.Windows.Forms.TextBox -Property @{
 $Form.Controls.Add($TextBoxLightroom)
 
 $TextBoxMatrixRed0 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(68,85)
+    Location = New-Object System.Drawing.Point(68,61)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
@@ -96,23 +112,25 @@ $TextBoxMatrixRed0 = New-Object System.Windows.Forms.TextBox -Property @{
 $Form.Controls.Add($TextBoxMatrixRed0)
 
 $TextBoxMatrixRed1 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(128,85)
+    Location = New-Object System.Drawing.Point(128,61)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
+    Enabled = $False
     TabIndex = 4
 }
 $Form.Controls.Add($TextBoxMatrixRed1)
 
 $TextBoxMatrixRed2 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(188,85)
+    Location = New-Object System.Drawing.Point(188,61)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
+    Enabled = $False
     TabIndex = 5
 }
 $Form.Controls.Add($TextBoxMatrixRed2)
 
 $TextBoxMatrixGreen0 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(68,110)
+    Location = New-Object System.Drawing.Point(68,86)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
@@ -120,23 +138,25 @@ $TextBoxMatrixGreen0 = New-Object System.Windows.Forms.TextBox -Property @{
 $Form.Controls.Add($TextBoxMatrixGreen0)
 
 $TextBoxMatrixGreen1 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(128,110)
+    Location = New-Object System.Drawing.Point(128,86)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
+    Enabled = $False
     TabIndex = 4
 }
 $Form.Controls.Add($TextBoxMatrixGreen1)
 
 $TextBoxMatrixGreen2 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(188,110)
+    Location = New-Object System.Drawing.Point(188,86)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
+    Enabled = $False
     TabIndex = 5
 }
 $Form.Controls.Add($TextBoxMatrixGreen2)
 
 $TextBoxMatrixBlue0 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(68,135)
+    Location = New-Object System.Drawing.Point(68,111)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
@@ -144,17 +164,19 @@ $TextBoxMatrixBlue0 = New-Object System.Windows.Forms.TextBox -Property @{
 $Form.Controls.Add($TextBoxMatrixBlue0)
 
 $TextBoxMatrixBlue1 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(128,135)
+    Location = New-Object System.Drawing.Point(128,111)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
+    Enabled = $False
     TabIndex = 4
 }
 $Form.Controls.Add($TextBoxMatrixBlue1)
 
 $TextBoxMatrixBlue2 = New-Object System.Windows.Forms.TextBox -Property @{
-    Location = New-Object System.Drawing.Point(188,135)
+    Location = New-Object System.Drawing.Point(188,111)
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
+    Enabled = $False
     TabIndex = 5
 }
 $Form.Controls.Add($TextBoxMatrixBlue2)
@@ -178,8 +200,8 @@ Function Get-Lightroom($initialDirectory)
     $select.filename
 }
 
-# even check function by /\/\o\/\/
-Function Check-Even {
+# even test function by /\/\o\/\/
+Function Test-Even {
 
     Param(
 
@@ -203,11 +225,15 @@ Function Format-Curves {
 
 
             # collect all rgb values
-            $Curve = @{Blue = @();Green = @();Red = @()}
-            $RGB = @('Blue','Green','Red')
+            #
+            # Luminance has no clear name inside the lrtemplate!
+            # The valuename PV2012 (Process Version 2012 Lightroom 4) is used directly for convenience.
+            
+            $Curve = @{PV2012 = @();Blue = @();Green = @();Red = @()}
+            $RGB = @('PV2012','Blue','Green','Red')
             $RGBValues = 0
 
-            for ($i = 0; $i -lt 3; $i++){
+            for ($i = 0; $i -lt 4; $i++){
 
                 $Regex = [Regex]::new('(?smi)' + $RGB[$i] + ' = {(.*?)}')
 
@@ -223,12 +249,13 @@ Function Format-Curves {
 
 
             # format all rgb values
-            if ($RGBValues -eq 48){
 
-                for ($i = 0; $i -lt 3; $i++){
-                    for ($j = 0; $j -lt 16; $j++){
+            if ($RGBValues -ne 0){
+
+                for ($i = 0; $i -lt 4; $i++){
+                    for ($j = 0; $j -lt $Curve.($RGB[$i]).Count; $j++){
                     
-                        if (Check-Even -Number $j){
+                        if (Test-Even -Number $j){
                             $X = 'x'
                         } else {
                             $X = ''
@@ -250,10 +277,12 @@ Function Format-Curves {
 
 
             # create nuke output
+
             if (!$Cancel){
 
                 $NukeNode = "ColorLookup {`n" + `
                     "lut {master {}`n" + `
+                    "master {curve " + ($Curve.PV2012 -Join ' ') + "}`n" + `
                     "red {curve " + ($Curve.Red -Join ' ') + "}`n" + `
                     "green {curve " + ($Curve.Green -Join ' ') + "}`n" + `
                     "blue {curve " + ($Curve.Blue -Join ' ') + "}`n" + `
@@ -265,13 +294,13 @@ Function Format-Curves {
 
                 Set-Clipboard -Value $NukeNode
             
-                $TextBoxLabelInfoCurves.Text = 'Nuke Node successfully copied to Clipboard.'
+                $TextBoxLabelInfo.Text = 'Nuke Curves successfully copied to Clipboard.'
 
             }
 
         } else {
 
-            $TextBoxLabelInfoCurves.Text = 'Input is not valid.'
+            $TextBoxLabelInfo.Text = 'Input is not valid.'
 
         }
     }
@@ -352,7 +381,7 @@ Function Format-Matrix {
 
                 Set-Clipboard -Value $NukeNode
             
-                $TextBoxLabelInfoMatrix.Text = 'Nuke Node successfully copied to Clipboard.'
+                $TextBoxLabelInfo.Text = 'Nuke Matrix successfully copied to Clipboard.'
 
             }
         } 
@@ -362,7 +391,7 @@ Function Format-Matrix {
 
 $ButtonFile.Add_Click({
 
-    $TextBoxLightroom.Text = $global:variable = Get-Lightroom "*\"
+    $TextBoxLightroom.Text = Get-Lightroom "*\"
 
     Format-Curves
 
@@ -372,6 +401,13 @@ $ButtonFile.Add_Click({
 $TextBoxLightroom.Add_TextChanged({
 
     Format-Curves
+
+})
+
+
+$CheckBoxTopMost.Add_CheckStateChanged({
+
+    $Form.TopMost = $CheckBoxTopMost.Checked
 
 })
 
