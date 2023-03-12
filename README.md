@@ -1,8 +1,8 @@
 # 3DLUTtoNUKE
 
-This utility can be used to quickly copy Curves and Matrix information from 3D LUT Creator to The Foundry Nuke.
+This utility can be used to quickly copy RGB Curves and Color Matrix from 3D LUT Creator to The Foundry Nuke.
 
-Matrix values can be copied by doubleclicking on the Red, Green and Blue values text on the channels tab within 3D Lut creator. When pasted into the input fields they are automatically converted. Once all three fields are filled in the Nuke Matrix node is automatically copied to the clipboard and can be pasted in your Nuke nodetree.
+Matrix values can be copied by doubleclicking on the Red, Green and Blue values text on the channels tab within 3D LUT Creator. When pasted into the input fields they are automatically converted. Once all three fields are filled in the Nuke Matrix node is automatically copied to the clipboard and can be pasted in your Nuke nodetree.
 
 The Master, Red, Green and Blue Curves from the Curves tab can be copied by 'Save Curves...' from the dropdown menu and saving them as a Lightroom template. The file can then be loaded, the curves are directly copied to the clipboard and can be pasted in Nuke.
 
