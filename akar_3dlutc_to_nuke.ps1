@@ -1,7 +1,7 @@
 #Requires -Version 5.0
 
 #
-# Akar // 3D LUT Creator to NUKE v1.0.2
+# akar // 3D LUT Creator to NUKE v1.0.2
 # ----------------------------------
 # http://www.akar.id
 # ----------------------------------
@@ -18,7 +18,7 @@ Add-Type -AssemblyName System.Drawing
 $Form = New-Object System.Windows.Forms.Form -Property @{
     Size = New-Object System.Drawing.Size(650,225)
     FormBorderStyle = 'FixedDialog'
-    Text = 'Akar \\ 3D LUT Creator to NUKE v1.0.2'
+    Text = 'akar \\ 3D LUT Creator to NUKE v1.0.2'
     MaximizeBox = $False
     MinimizeBox = $True
     StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
