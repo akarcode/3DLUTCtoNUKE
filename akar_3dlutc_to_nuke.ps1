@@ -93,6 +93,26 @@ $TextBoxLightroom = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(487,22)
     Text = ''
     TabIndex = 1
+    AllowDrop = $True
+
+    Add_DragOver = ({
+
+    	if ($_.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop)[0]) {
+
+	        $_.Effect = 'Copy'
+
+	    } else {
+
+	        $_.Effect = 'None'
+
+	    }
+    })
+
+    Add_DragDrop = ({
+
+        $TextBoxLightroom.Text = $_.Data.GetData([Windows.Forms.DataFormats]::FileDrop)[0]
+
+    })
 
     Add_TextChanged = ({
 
