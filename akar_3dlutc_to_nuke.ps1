@@ -263,7 +263,7 @@ Function Format-Curves {
 
     if ($TextBoxLightroom.Text -ne ''){
     
-        if ($TextBoxLightroom.Text -match '^(\w:\\)([a-z0-9_\-\\ ]*)(.lrtemplate$)'){
+        if ([System.IO.File]::Exists($TextBoxLightroom.Text) -and [System.IO.Path]::HasExtension('.lrtemplate')){
 
             $InputPath = $TextBoxLightroom.Text
             $LightroomTemplate = (Get-Content $InputPath -Raw)
