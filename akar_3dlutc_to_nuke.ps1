@@ -372,7 +372,7 @@ Function Format-Matrix {
             # format all rgb values
             for ($i = 0; $i -lt 3; $i++){
 
-                $MatrixColors[$i] = $MatrixColors[$i] / 100
+                $MatrixColors[$i] /= 100
             
             }
 
