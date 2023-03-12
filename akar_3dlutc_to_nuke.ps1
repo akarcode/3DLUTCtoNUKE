@@ -1,12 +1,17 @@
-﻿#Requires -Version 5.0
+#Requires -Version 5.0
 
 #
-# Akar // 3D LUT Creator to NUKE v1.0.1
+# Akar // 3D LUT Creator to NUKE v1.0.2
 # ----------------------------------
 # http://www.akar.id
 # ----------------------------------
 # by Nick Zimmermann
 # ----------------------------------
+#
+# v1.0.2
+# minor code adjustments
+# shifting things around a bit
+# fixed always on top at launch
 #
 # v1.0.1
 # added topmost checkbox
@@ -15,14 +20,6 @@
 # changed disabled second and third matrix input
 #
 # v1.0 (initial release)
-#
-#
-# TODO:
-# nothing at this point
-#
-# to consider:
-# - checkboxes of what curves to actually copy
-#   This would bloat the script. just delete the curve points in nuke
 #
 
 
@@ -35,12 +32,16 @@ Add-Type -AssemblyName System.Drawing
 $Form = New-Object System.Windows.Forms.Form -Property @{
     Size = New-Object System.Drawing.Size(650,225)
     FormBorderStyle = 'FixedDialog'
-    Text = 'Akar \\ 3D LUT Creator to NUKE v1.0.1'
-    Toplevel = $true
-    TopMost = $true
-    MaximizeBox = $false
-    MinimizeBox = $true
+    Text = 'Akar \\ 3D LUT Creator to NUKE v1.0.2'
+    MaximizeBox = $False
+    MinimizeBox = $True
     StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
+
+    Add_Load = ({
+
+      $Form.TopMost = $True
+
+    })
 }
 
 $GroupBoxSeparator00 = New-Object System.Windows.Forms.GroupBox -Property @{
@@ -61,8 +62,14 @@ $CheckBoxTopMost = New-Object System.Windows.Forms.CheckBox -Property @{
     Location = New-Object System.Drawing.Point(510,159)
     Size = New-Object System.Drawing.Size(120,20)
     Text = 'Always on top'
-    Checked = $true
+    Checked = $True
     RightToLeft = 'Yes'
+
+    Add_CheckStateChanged = ({
+
+        $Form.TopMost = $CheckBoxTopMost.Checked
+
+    })
 }
 $Form.Controls.Add($CheckBoxTopMost)
 
@@ -100,6 +107,12 @@ $TextBoxLightroom = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(487,22)
     Text = ''
     TabIndex = 1
+
+    Add_TextChanged = ({
+
+        Format-Curves
+
+    })
 }
 $Form.Controls.Add($TextBoxLightroom)
 
@@ -108,6 +121,12 @@ $TextBoxMatrixRed0 = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
+
+    Add_TextChanged = ({
+
+        Format-Matrix -Color Red -TextInput $TextBoxMatrixRed0.Text
+
+    })
 }
 $Form.Controls.Add($TextBoxMatrixRed0)
 
@@ -134,6 +153,12 @@ $TextBoxMatrixGreen0 = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
+
+    Add_TextChanged = ({
+
+        Format-Matrix -Color Green -TextInput $TextBoxMatrixGreen0.Text
+
+    })
 }
 $Form.Controls.Add($TextBoxMatrixGreen0)
 
@@ -160,6 +185,12 @@ $TextBoxMatrixBlue0 = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
+
+    Add_TextChanged = ({
+
+        Format-Matrix -Color Blue -TextInput $TextBoxMatrixBlue0.Text
+
+    })
 }
 $Form.Controls.Add($TextBoxMatrixBlue0)
 
@@ -186,6 +217,14 @@ $ButtonFile = New-Object System.Windows.Forms.Button -Property @{
     Size = New-Object System.Drawing.Size(60,22)
     Text = "Select"
     TabIndex = 2
+
+    Add_Click = ({
+
+        $TextBoxLightroom.Text = Get-Lightroom "*\"
+
+        Format-Curves
+
+    })
 }
 $Form.Controls.Add($ButtonFile)
 
@@ -205,7 +244,7 @@ Function Test-Even {
 
     Param(
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$True)]
         $Number
 
     )
@@ -227,7 +266,7 @@ Function Format-Curves {
             # collect all rgb values
             #
             # Luminance has no clear name inside the lrtemplate!
-            # The valuename PV2012 (Process Version 2012 Lightroom 4) is used directly for convenience.
+            # The valuename PV2012 (Process Version 2012 Lightroom 4) is borrowed.
             
             $Curve = @{PV2012 = @();Blue = @();Green = @();Red = @()}
             $RGB = @('PV2012','Blue','Green','Red')
@@ -261,7 +300,7 @@ Function Format-Curves {
                             $X = ''
                         }
 
-                        $Curve.($RGB[$i])[$j] = $X + [math]::Round((([int]$Curve.($RGB[$i])[$j] - 0) / (255 - 0)),6)
+                        $Curve.($RGB[$i])[$j] = $X + [math]::Round(([int]$Curve.($RGB[$i])[$j] - 0) / (255 - 0), 6)
 
                     }
                 }
@@ -310,28 +349,35 @@ Function Format-Matrix {
 
     Param(
 
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$True)]
         $Color,
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$True)]
         $TextInput
 
     )
 
 
     if ($TextInput -ne ''){
+
+    Write-Host 'here'
     
         if ($TextInput -match '^(R:)'){
+
+            Write-Host 'hero'
 
             # collect all rgb values
             $MatrixColors = $TextInput.Split().Replace('%','').Replace('R:','').Replace('G:','').Replace('B:','').Where({ $_ -ne '' })
 
+            Write-Host $MatrixColors
 
             # format all rgb values
             for ($i = 0; $i -lt 3; $i++){
 
-                $MatrixColors[$i] = ($MatrixColors[$i] / 100)
+                $MatrixColors[$i] = $MatrixColors[$i] / 100
             
             }
+
+            Write-Host $MatrixColors
 
 
             # write values back into input fields
@@ -387,46 +433,5 @@ Function Format-Matrix {
         } 
     }
 }
-
-
-$ButtonFile.Add_Click({
-
-    $TextBoxLightroom.Text = Get-Lightroom "*\"
-
-    Format-Curves
-
-})
-
-
-$TextBoxLightroom.Add_TextChanged({
-
-    Format-Curves
-
-})
-
-
-$CheckBoxTopMost.Add_CheckStateChanged({
-
-    $Form.TopMost = $CheckBoxTopMost.Checked
-
-})
-
-
-$TextBoxMatrixRed0.Add_TextChanged({
-
-    Format-Matrix -Color Red -TextInput $TextBoxMatrixRed0.Text
-
-})
-$TextBoxMatrixGreen0.Add_TextChanged({
-
-    Format-Matrix -Color Green -TextInput $TextBoxMatrixGreen0.Text
-
-})
-$TextBoxMatrixBlue0.Add_TextChanged({
-
-    Format-Matrix -Color Blue -TextInput $TextBoxMatrixBlue0.Text
-
-})
-
 
 $Form.ShowDialog() | Out-Null
