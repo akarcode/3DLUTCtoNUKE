@@ -252,7 +252,7 @@ Function Format-Curves {
         if ([System.IO.File]::Exists($TextBoxLightroom.Text) -and [System.IO.Path]::HasExtension('.lrtemplate')){
 
             $InputPath = $TextBoxLightroom.Text
-            $LightroomTemplate = (Get-Content $InputPath -Raw)
+            $LightroomTemplate = (Get-Content $InputPath -Raw) -replace '\s+'
 
             # Collect all RGB values.
             # PV2012 (Process Version 2012 Lightroom 4) is used for the Master curve.
@@ -262,13 +262,13 @@ Function Format-Curves {
 
             for ($i = 0; $i -lt 4; $i++){
 
-                $Regex = [Regex]::New('(?s)' + $RGB[$i] + ' = {(.*?)}')
+                $Regex = [Regex]::New('(?s)' + $RGB[$i] + '={(.*?)}')
 
                 $Match = $Regex.Match($LightroomTemplate).Groups[1]
 
                 if ($Match.Success){
 
-                    $Curve.($RGB[$i]) = $Match.Value.Replace("`t",'').Replace("`n",'').Split(',') | Select-Object -SkipLast 1
+                    $Curve.($RGB[$i]) = $Match.Value.Split(',') | Select-Object -SkipLast 1
                     $RGBValues += $Curve.($RGB[$i]).Count
 
                 }
@@ -295,7 +295,7 @@ Function Format-Curves {
 
             } else {
 
-                $TextBoxLabelInfoCurves.Text = 'Cannot find the RGB values in the Lightroom Template.'
+                $TextBoxLabelInfo.Text = 'Cannot find the RGB values in the Lightroom Template.'
                 $Cancel = $True
 
             }
