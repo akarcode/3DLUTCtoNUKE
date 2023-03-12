@@ -367,7 +367,7 @@ Function Format-Matrix {
         if ($TextInput -match '^(R:)'){
 
             # collect all rgb values
-            $MatrixColors = $TextInput.Split().Replace('%','').Replace('R:','').Replace('G:','').Replace('B:','').Where({ $_ -ne '' })
+            $MatrixColors = $TextInput.split(' %RGB:').Where({ $_.Trim() })
 
             # format all rgb values
             for ($i = 0; $i -lt 3; $i++){
