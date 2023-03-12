@@ -11,6 +11,7 @@ You'll have to add a Colorspace node to convert to the correct colorspace and th
 #### Changelog
 
 1.0.2
+- added drag and drop functionality to the curves textbox
 - minor code adjustments
 - shifting things around a bit
 - fixed always on top at launch
