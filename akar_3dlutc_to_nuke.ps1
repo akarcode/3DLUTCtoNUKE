@@ -268,33 +268,27 @@ Function Format-Curves {
             $InputPath = $TextBoxLightroom.Text
             $LightroomTemplate = (Get-Content $InputPath -Raw)
 
-
-            # collect all rgb values
-            #
-            # Luminance has no clear name inside the lrtemplate!
-            # The valuename PV2012 (Process Version 2012 Lightroom 4) is borrowed.
-            
-            $Curve = @{PV2012 = @();Blue = @();Green = @();Red = @()}
-            $RGB = @('PV2012','Blue','Green','Red')
+            # Collect all RGB values.
+            # PV2012 (Process Version 2012 Lightroom 4) is used for the Master curve.
+            $RGB = 'PV2012','Blue','Green','Red'
             $RGBValues = 0
+            $Curve = @{}
 
             for ($i = 0; $i -lt 4; $i++){
 
-                $Regex = [Regex]::new('(?smi)' + $RGB[$i] + ' = {(.*?)}')
+                $Regex = [Regex]::New('(?s)' + $RGB[$i] + ' = {(.*?)}')
 
                 $Match = $Regex.Match($LightroomTemplate).Groups[1]
 
                 if ($Match.Success){
 
-                    $Curve.($RGB[$i]) = $Match.Value.Replace("`t",'').Replace("`n",'').Split(',').Where({ $_ -ne '' }) | Select-Object -SkipLast 1
+                    $Curve.($RGB[$i]) = $Match.Value.Replace("`t",'').Replace("`n",'').Split(',') | Select-Object -SkipLast 1
                     $RGBValues += $Curve.($RGB[$i]).Count
 
                 }
             }
 
-
             # format all rgb values
-
             if ($RGBValues -ne 0){
 
                 for ($i = 0; $i -lt 4; $i++){
@@ -320,9 +314,7 @@ Function Format-Curves {
 
             }
 
-
             # create nuke output
-
             if (!$Cancel){
 
                 $NukeNode = "ColorLookup {`n" + `
@@ -402,7 +394,6 @@ Function Format-Matrix {
                     }
                 }
             }
-
 
             # create nuke output
             if (!$Incomplete){
