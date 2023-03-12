@@ -362,8 +362,8 @@ Function Format-Matrix {
             }
 
             # collect values from grid
-            $Matrix = @{Blue = @();Green = @();Red = @()}
-            $RGB = @('Blue','Green','Red')
+            $Matrix = @{}
+            $RGB = 'Blue','Green','Red'
 
             for ($i = 0; $i -lt 3; $i++){
                 for ($j = 0; $j -lt 3; $j++){
@@ -374,7 +374,7 @@ Function Format-Matrix {
                     
                     } else {
 
-                        $Matrix.($RGB[$i]) += ($((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text)
+                        $Matrix.($RGB[$i]) += @($((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text)
                         $Incomplete += $False
                     
                     }
