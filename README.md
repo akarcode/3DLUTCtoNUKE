@@ -1,4 +1,4 @@
-# 3dlut2nuke
+# 3DLUTtoNUKE
 
 This utility can be used to quickly copy Curves and Matrix information from 3D LUT Creator to The Foundry Nuke.
 
@@ -11,15 +11,15 @@ You'll have to add a Colorspace node to convert to the correct colorspace and th
 #### Changelog
 
 1.0.2
-- added drag and drop functionality to the curves textbox
-- minor code adjustments
-- shifting things around a bit
-- fixed always on top at launch
+- Added drag and drop functionality to the curves textbox.
+- Minor code adjustments.
+- Shifted things around a bit.
+- Fixed always on top at launch.
 
 1.0.1
-- added topmost checkbox
-- added master curve (luminance)
-- changed GUI to only one status line
-- changed disabled second and third matrix input
+- Added topmost checkbox.
+- Added master curve (luminance).
+- Changed GUI to only one status line.
+- Changed disabled second and third matrix input.
 
-v1.0 (initial release)
+v1.0 (Initial release)
