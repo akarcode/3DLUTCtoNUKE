@@ -407,17 +407,17 @@ Function Format-Matrix {
             # create nuke output
             if (!$Incomplete){
 
-                $NukeNode = "ColorMatrix {`n" + `
-                    "inputs 0`n" + `
-                    "matrix {`n" + `
-                    "{" + ($Matrix.Red -Join ' ') + "}`n" + `
-                    "{" + ($Matrix.Green -Join ' ') + "}`n" + `
-                    "{" + ($Matrix.Blue -Join ' ') + "}`n" + `
-                    "}`n" + `
-                    "name ColorMatrix3DLUTCreator`n" + `
-                    "selected true`n" + `
-                    "xpos 0`n" + `
-                    "ypos 0`n" + `
+                $NukeNode = "ColorMatrix {`n" +
+                    "inputs 0`n" +
+                    "matrix {`n" +
+                    "{" + ($Matrix.Red -Join ' ') + "}`n" +
+                    "{" + ($Matrix.Green -Join ' ') + "}`n" +
+                    "{" + ($Matrix.Blue -Join ' ') + "}`n" +
+                    "}`n" +
+                    "name ColorMatrix3DLUTCreator`n" +
+                    "selected true`n" +
+                    "xpos 0`n" +
+                    "ypos 0`n" +
                     "}"
 
                 Set-Clipboard -Value $NukeNode
