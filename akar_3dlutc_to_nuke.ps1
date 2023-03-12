@@ -286,7 +286,7 @@ Function Format-Curves {
                             $X = ''
                         }
 
-                        $Curve.($RGB[$i])[$j] = $X + [math]::Round(([int]$Curve.($RGB[$i])[$j] - 0) / (255 - 0), 6)
+                        $Curve.($RGB[$i])[$j] = $X + [math]::Round([int]$Curve.($RGB[$i])[$j] / 255, 6)
 
                     }
                 }
