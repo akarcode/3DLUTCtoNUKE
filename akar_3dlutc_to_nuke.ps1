@@ -245,20 +245,6 @@ Function Get-Lightroom($initialDirectory)
     $select.filename
 }
 
-# even test function by /\/\o\/\/
-Function Test-Even {
-
-    Param(
-
-        [Parameter(Mandatory=$True)]
-        $Number
-
-    )
-
-    [bool]!($Number % 2)
-    
-}
-
 Function Format-Curves {
 
     if ($TextBoxLightroom.Text -ne ''){
@@ -294,7 +280,7 @@ Function Format-Curves {
                 for ($i = 0; $i -lt 4; $i++){
                     for ($j = 0; $j -lt $Curve.($RGB[$i]).Count; $j++){
                     
-                        if (Test-Even -Number $j){
+                        if ([bool]!($j % 2)){ # even test!
                             $X = 'x'
                         } else {
                             $X = ''
