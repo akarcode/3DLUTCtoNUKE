@@ -8,20 +8,6 @@
 # by Nick Zimmermann
 # ----------------------------------
 #
-# v1.0.2
-# minor code adjustments
-# shifting things around a bit
-# fixed always on top at launch
-#
-# v1.0.1
-# added topmost checkbox
-# added master curve (luminance)
-# changed GUI to only one status line
-# changed disabled second and third matrix input
-#
-# v1.0 (initial release)
-#
-
 
 Clear-Host
 
