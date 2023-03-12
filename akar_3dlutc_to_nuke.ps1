@@ -356,19 +356,12 @@ Function Format-Matrix {
 
     )
 
-
     if ($TextInput -ne ''){
-
-    Write-Host 'here'
     
         if ($TextInput -match '^(R:)'){
 
-            Write-Host 'hero'
-
             # collect all rgb values
             $MatrixColors = $TextInput.Split().Replace('%','').Replace('R:','').Replace('G:','').Replace('B:','').Where({ $_ -ne '' })
-
-            Write-Host $MatrixColors
 
             # format all rgb values
             for ($i = 0; $i -lt 3; $i++){
@@ -377,16 +370,12 @@ Function Format-Matrix {
             
             }
 
-            Write-Host $MatrixColors
-
-
             # write values back into input fields
             for ($i = 0; $i -lt 3; $i++){
 
                 $((Get-Variable -Name ('TextBoxMatrix' + $Color + $i)).value).Text = $MatrixColors[$i]
             
             }
-
 
             # collect values from grid
             $Matrix = @{Blue = @();Green = @();Red = @()}
