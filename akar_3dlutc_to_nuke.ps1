@@ -262,13 +262,13 @@ Function Format-Curves {
 
             for ($i = 0; $i -lt 4; $i++){
 
-                $Regex = [Regex]::New('(?s)' + $RGB[$i] + '={(.*?)}')
+                $Regex = [Regex]::New('(?s)' + $RGB[$i] + '={0,(.*?),}')
 
                 $Match = $Regex.Match($LightroomTemplate).Groups[1]
 
                 if ($Match.Success){
 
-                    $Curve.($RGB[$i]) = $Match.Value.Split(',') | Select-Object -SkipLast 1
+                    $Curve.($RGB[$i]) = $Match.Value.Split(',')
                     $RGBValues += $Curve.($RGB[$i]).Count
 
                 }
@@ -280,7 +280,7 @@ Function Format-Curves {
                 for ($i = 0; $i -lt 4; $i++){
                     for ($j = 0; $j -lt $Curve.($RGB[$i]).Count; $j++){
                     
-                        if ([bool]!($j % 2)){ # even test!
+                        if ([bool]($j % 2)){ # even test!
                             $X = 'x'
                         } else {
                             $X = ''
