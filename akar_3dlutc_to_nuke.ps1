@@ -235,14 +235,18 @@ $ButtonFile = New-Object System.Windows.Forms.Button -Property @{
 $Form.Controls.Add($ButtonFile)
 
 # functions
-Function Get-Lightroom($initialDirectory)
+Function Get-Lightroom($InitialDirectory)
 {
     Add-Type -AssemblyName System.Windows.Forms | Out-Null
-    $select = New-Object System.Windows.Forms.OpenFileDialog
-    $select.initialDirectory = $initialDirectory
-    $select.filter = "Lightroom|*.lrtemplate"
-    $select.ShowDialog() | Out-Null
-    $select.filename
+
+    $Select = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+        InitialDirectory = $InitialDirectory
+        Filter = "Lightroom|*.lrtemplate"
+    }
+
+    $Select.ShowDialog() | Out-Null
+
+    $Select.Filename
 }
 
 Function Format-Curves {
