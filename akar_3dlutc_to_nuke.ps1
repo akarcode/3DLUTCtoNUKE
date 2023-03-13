@@ -235,9 +235,7 @@ $ButtonFile = New-Object System.Windows.Forms.Button -Property @{
 $Form.Controls.Add($ButtonFile)
 
 # functions
-Function Get-Lightroom($InitialDirectory)
-{
-    Add-Type -AssemblyName System.Windows.Forms | Out-Null
+Function Get-Lightroom($InitialDirectory){
 
     $Select = New-Object System.Windows.Forms.OpenFileDialog -Property @{
         InitialDirectory = $InitialDirectory
