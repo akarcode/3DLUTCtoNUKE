@@ -30,19 +30,21 @@ $Form = New-Object System.Windows.Forms.Form -Property @{
     })
 }
 
-$GroupBoxSeparator00 = New-Object System.Windows.Forms.GroupBox -Property @{
+$Divider0 = New-Object System.Windows.Forms.Panel -Property @{
     Location = New-Object System.Drawing.Point(15,47)
-    Size = New-Object System.Drawing.Size(614,2)
-    FlatStyle = 'Flat'
+    Size = New-Object System.Drawing.Size(614,1)
+    BackColor = '217, 217, 217'
+    BorderStyle = 'None'
 }
-$Form.Controls.Add($GroupBoxSeparator00)
+$Form.Controls.Add($Divider0)
 
-$GroupBoxSeparator01 = New-Object System.Windows.Forms.GroupBox -Property @{
+$Divider1 = New-Object System.Windows.Forms.Panel -Property @{
     Location = New-Object System.Drawing.Point(15,143)
-    Size = New-Object System.Drawing.Size(614,2)
-    FlatStyle = 'Flat'
+    Size = New-Object System.Drawing.Size(614,1)
+    BackColor = '217, 217, 217'
+    BorderStyle = 'None'
 }
-$Form.Controls.Add($GroupBoxSeparator01)
+$Form.Controls.Add($Divider1)
 
 $CheckBoxTopMost = New-Object System.Windows.Forms.CheckBox -Property @{
     Location = New-Object System.Drawing.Point(510,159)
