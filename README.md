@@ -10,6 +10,11 @@ You'll have to add a Colorspace node to convert to the correct colorspace and th
 
 #### Changelog
 
+1.0.3
+- removed unnecessary loops.
+- reduced need for array in colormatrix.
+- minor code adjustments.
+
 1.0.2
 - Added drag and drop functionality to the curves textbox.
 - Minor code adjustments.
