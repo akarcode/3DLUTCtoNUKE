@@ -343,11 +343,7 @@ Function Format-Matrix {
 
             $MatrixColors[$i] /= 100
             
-        }
-
-        # write values back into input fields
-        for ($i = 0; $i -lt 3; $i++){
-
+            # write values back into input fields
             $((Get-Variable -Name ('TextBoxMatrix' + $Color + $i)).value).Text = $MatrixColors[$i]
             
         }
