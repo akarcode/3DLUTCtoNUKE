@@ -10,7 +10,7 @@ You'll have to add a Colorspace node to convert to the correct colorspace and th
 
 #### Notes
 
-The Binary is compiled from C# and is not the packed PowerShell Script. The code is basically the same and will generate the same output.
+The Binary included in the release is compiled from C# and is not the packed PowerShell Script. The code is basically the same and will generate the same output.
 It requires .NET 7 libraries to run it.
 
 
