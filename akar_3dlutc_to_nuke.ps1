@@ -306,17 +306,17 @@ Function Format-Curves {
 
             Set-Clipboard -Value $NukeNode
             
-            $TextBoxLabelInfo.Text = 'Nuke Curves successfully copied to Clipboard.'
+            $TextBoxLabelInfo.Text = 'Status: Nuke Curves successfully copied to Clipboard.'
 
         } else {
 
-            $TextBoxLabelInfo.Text = 'Cannot find the RGB values in the Lightroom Template.'
+            $TextBoxLabelInfo.Text = 'Status: Cannot find the RGB values in the Lightroom Template.'
             $Cancel = $True
 
         }
     } else {
 
-        $TextBoxLabelInfo.Text = 'Input is not valid.'
+        $TextBoxLabelInfo.Text = 'Status: Input is not valid.'
 
     }
 
@@ -387,7 +387,7 @@ Function Format-Matrix {
 
             Set-Clipboard -Value $NukeNode
             
-            $TextBoxLabelInfo.Text = 'Nuke Matrix successfully copied to Clipboard.'
+            $TextBoxLabelInfo.Text = 'Status: Nuke Matrix successfully copied to Clipboard.'
 
         }
     } 
