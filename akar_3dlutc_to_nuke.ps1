@@ -1,7 +1,7 @@
 #Requires -Version 5.0
 
 #
-# akar // 3D LUT Creator to NUKE v1.0.2
+# akar // 3D LUT Creator to NUKE v1.0.3
 # ----------------------------------
 # http://www.akar.id
 # ----------------------------------
@@ -18,7 +18,7 @@ Add-Type -AssemblyName System.Drawing
 $Form = New-Object System.Windows.Forms.Form -Property @{
     Size = New-Object System.Drawing.Size(650,225)
     FormBorderStyle = 'FixedDialog'
-    Text = 'akar \\ 3D LUT Creator to NUKE v1.0.2'
+    Text = 'akar \\ 3D LUT Creator to NUKE v1.0.3'
     MaximizeBox = $False
     MinimizeBox = $True
     StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
@@ -250,87 +250,76 @@ Function Get-Lightroom($InitialDirectory){
 }
 
 Function Format-Curves {
-
-    if ($TextBoxLightroom.Text -ne ''){
     
-        if ([System.IO.File]::Exists($TextBoxLightroom.Text) -and [System.IO.Path]::HasExtension('.lrtemplate')){
+    if (![string]::IsNullOrWhiteSpace($TextBoxLightroom.Text) -and 
+        [System.IO.File]::Exists($TextBoxLightroom.Text) -and 
+        [System.IO.Path]::HasExtension('.lrtemplate')){
 
-            $InputPath = $TextBoxLightroom.Text
-            $LightroomTemplate = (Get-Content $InputPath -Raw) -replace '\s+'
+        $LightroomTemplate = (Get-Content $TextBoxLightroom.Text -Raw) -replace '\s+'
 
-            # Collect all RGB values.
-            # PV2012 (Process Version 2012 Lightroom 4) is used for the Master curve.
-            $RGB = 'PV2012','Blue','Green','Red'
-            $RGBValues = 0
-            $Curve = @{}
+        # Collect all RGB values.
+        # PV2012 (Process Version 2012 Lightroom 4) is used for the Master curve.
+        $RGB = 'PV2012','Blue','Green','Red'
+        $Curve = @{}
+
+        for ($i = 0; $i -lt 4; $i++){
+
+            $Regex = [Regex]::New('(?s)' + $RGB[$i] + '={0,(.*?),}')
+
+            $Match = $Regex.Match($LightroomTemplate).Groups[1]
+
+            if ($Match.Success){
+
+                $Curve.($RGB[$i]) = $Match.Value.Split(',')
+
+            }
+        }
+
+        # format all rgb values
+        if ([bool](Compare-Object ([string[]]$Curve.Keys) $RGB -IncludeEqual -ExcludeDifferent)){
 
             for ($i = 0; $i -lt 4; $i++){
-
-                $Regex = [Regex]::New('(?s)' + $RGB[$i] + '={0,(.*?),}')
-
-                $Match = $Regex.Match($LightroomTemplate).Groups[1]
-
-                if ($Match.Success){
-
-                    $Curve.($RGB[$i]) = $Match.Value.Split(',')
-                    $RGBValues += $Curve.($RGB[$i]).Count
-
-                }
-            }
-
-            # format all rgb values
-            if ($RGBValues -ne 0){
-
-                for ($i = 0; $i -lt 4; $i++){
-                    for ($j = 0; $j -lt $Curve.($RGB[$i]).Count; $j++){
+                for ($j = 0; $j -lt $Curve.($RGB[$i]).Count; $j++){
                     
-                        if ([bool]($j % 2)){ # even test!
-                            $X = 'x'
-                        } else {
-                            $X = ''
-                        }
-
-                        $Curve.($RGB[$i])[$j] = $X + [math]::Round([int]$Curve.($RGB[$i])[$j] / 255, 6)
-
+                    $X = ''
+                    if ([bool]($j % 2)){ # even test!
+                        $X = 'x'
                     }
+
+                    $Curve.($RGB[$i])[$j] = $X + [math]::Round([int]$Curve.($RGB[$i])[$j] / 255, 6)
+
                 }
-
-                $Cancel = $False
-
-            } else {
-
-                $TextBoxLabelInfo.Text = 'Cannot find the RGB values in the Lightroom Template.'
-                $Cancel = $True
-
             }
 
             # create nuke output
-            if (!$Cancel){
+            $NukeNode = "ColorLookup {`n" +
+            "lut {master {}`n" +
+            "master {curve " + ($Curve.PV2012 -Join ' ') + "}`n" +
+            "red {curve " + ($Curve.Red -Join ' ') + "}`n" +
+            "green {curve " + ($Curve.Green -Join ' ') + "}`n" +
+            "blue {curve " + ($Curve.Blue -Join ' ') + "}`n" +
+            "alpha {}}`n" +
+            "name ColorLookup3DLUTCreator`n" +
+            "xpos 0`n" +
+            "ypos 0`n" +
+            "}"
 
-                $NukeNode = "ColorLookup {`n" + `
-                    "lut {master {}`n" + `
-                    "master {curve " + ($Curve.PV2012 -Join ' ') + "}`n" + `
-                    "red {curve " + ($Curve.Red -Join ' ') + "}`n" + `
-                    "green {curve " + ($Curve.Green -Join ' ') + "}`n" + `
-                    "blue {curve " + ($Curve.Blue -Join ' ') + "}`n" + `
-                    "alpha {}}`n" + `
-                    "name ColorLookup3DLUTCreator`n" + `
-                    "xpos 0`n" + `
-                    "ypos 0`n" + `
-                    "}"
-
-                Set-Clipboard -Value $NukeNode
+            Set-Clipboard -Value $NukeNode
             
-                $TextBoxLabelInfo.Text = 'Nuke Curves successfully copied to Clipboard.'
-
-            }
+            $TextBoxLabelInfo.Text = 'Nuke Curves successfully copied to Clipboard.'
 
         } else {
 
-            $TextBoxLabelInfo.Text = 'Input is not valid.'
+            $TextBoxLabelInfo.Text = 'Cannot find the RGB values in the Lightroom Template.'
+            $Cancel = $True
 
         }
+    } else {
+
+        $TextBoxLabelInfo.Text = 'Input is not valid.'
+
     }
+
 }
 
 Function Format-Matrix {
@@ -343,71 +332,69 @@ Function Format-Matrix {
         $TextInput
 
     )
-
-    if ($TextInput -ne ''){
     
-        if ($TextInput -match '^(R:)'){
+    if (![string]::IsNullOrWhiteSpace($TextInput) -and $TextInput -match '^(R:)'){
 
-            # collect all rgb values
-            $MatrixColors = $TextInput.split(' %RGB:').Where({ $_.Trim() })
+        # collect all rgb values
+        $MatrixColors = $TextInput.split(' %RGB:').Where({ $_.Trim() })
 
-            # format all rgb values
-            for ($i = 0; $i -lt 3; $i++){
+        # format all rgb values
+        for ($i = 0; $i -lt 3; $i++){
 
-                $MatrixColors[$i] /= 100
+            $MatrixColors[$i] /= 100
             
-            }
+        }
 
-            # write values back into input fields
-            for ($i = 0; $i -lt 3; $i++){
+        # write values back into input fields
+        for ($i = 0; $i -lt 3; $i++){
 
-                $((Get-Variable -Name ('TextBoxMatrix' + $Color + $i)).value).Text = $MatrixColors[$i]
+            $((Get-Variable -Name ('TextBoxMatrix' + $Color + $i)).value).Text = $MatrixColors[$i]
             
-            }
+        }
 
-            # collect values from grid
-            $Matrix = @{}
-            $RGB = 'Blue','Green','Red'
+        # collect values from grid
+        $Matrix = @{}
+        $RGB = 'Blue','Green','Red'
 
-            for ($i = 0; $i -lt 3; $i++){
-                for ($j = 0; $j -lt 3; $j++){
+        for ($i = 0; $i -lt 3; $i++){
+            for ($j = 0; $j -lt 3; $j++){
 
-                    if (($((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text) -eq ''){
+                if ([string]::IsNullOrWhiteSpace($((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text)){
                         
-                        $Incomplete += $True
+                    $Incomplete = $True
+                    $i = $j = 3
                     
-                    } else {
+                } else {
 
-                        $Matrix.($RGB[$i]) += @($((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text)
-                        $Incomplete += $False
+                    $Matrix.($RGB[$i]) += $((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text + ' '
+                    $Incomplete = $False
                     
-                    }
                 }
             }
+        }
 
-            # create nuke output
-            if (!$Incomplete){
+        # create nuke output
+        if (!$Incomplete){
 
-                $NukeNode = "ColorMatrix {`n" +
-                    "inputs 0`n" +
-                    "matrix {`n" +
-                    "{" + ($Matrix.Red -Join ' ') + "}`n" +
-                    "{" + ($Matrix.Green -Join ' ') + "}`n" +
-                    "{" + ($Matrix.Blue -Join ' ') + "}`n" +
-                    "}`n" +
-                    "name ColorMatrix3DLUTCreator`n" +
-                    "selected true`n" +
-                    "xpos 0`n" +
-                    "ypos 0`n" +
-                    "}"
+            $NukeNode = "ColorMatrix {`n" +
+                        "inputs 0`n" +
+                        "matrix {`n" +
+                        "{" + $Matrix.Red.Trim() + "}`n" +
+                        "{" + $Matrix.Green.Trim() + "}`n" +
+                        "{" + $Matrix.Blue.Trim() + "}`n" +
+                        "}`n" +
+                        "name ColorMatrix3DLUTCreator`n" +
+                        "selected true`n" +
+                        "xpos 0`n" +
+                        "ypos 0`n" +
+                        "}"
 
-                Set-Clipboard -Value $NukeNode
+            Set-Clipboard -Value $NukeNode
             
-                $TextBoxLabelInfo.Text = 'Nuke Matrix successfully copied to Clipboard.'
+            $TextBoxLabelInfo.Text = 'Nuke Matrix successfully copied to Clipboard.'
 
-            }
-        } 
-    }
+        }
+    } 
 }
 
 $Form.ShowDialog() | Out-Null
