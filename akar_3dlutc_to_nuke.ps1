@@ -1,7 +1,7 @@
 #Requires -Version 5.0
 
 #
-# akar // 3D LUT Creator to NUKE v1.0.3
+# akar // 3D LUT Creator to NUKE v1.0.4
 # ----------------------------------
 # http://www.akar.id
 # ----------------------------------
@@ -18,7 +18,7 @@ Add-Type -AssemblyName System.Drawing
 $Form = New-Object System.Windows.Forms.Form -Property @{
     Size = New-Object System.Drawing.Size(650,225)
     FormBorderStyle = 'FixedDialog'
-    Text = 'akar \\ 3D LUT Creator to NUKE v1.0.3'
+    Text = 'akar \\ 3D LUT Creator to NUKE v1.0.4'
     MaximizeBox = $False
     MinimizeBox = $True
     StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
@@ -129,6 +129,7 @@ $TextBoxMatrixRed0 = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
+    Name = 'TextBoxMatrixRed0'
 
     Add_TextChanged = ({
 
@@ -144,6 +145,7 @@ $TextBoxMatrixRed1 = New-Object System.Windows.Forms.TextBox -Property @{
     Text = ''
     Enabled = $False
     TabIndex = 4
+    Name = 'TextBoxMatrixRed1'
 }
 $Form.Controls.Add($TextBoxMatrixRed1)
 
@@ -153,6 +155,7 @@ $TextBoxMatrixRed2 = New-Object System.Windows.Forms.TextBox -Property @{
     Text = ''
     Enabled = $False
     TabIndex = 5
+    Name = 'TextBoxMatrixRed2'
 }
 $Form.Controls.Add($TextBoxMatrixRed2)
 
@@ -161,6 +164,7 @@ $TextBoxMatrixGreen0 = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
+    Name = 'TextBoxMatrixGreen0'
 
     Add_TextChanged = ({
 
@@ -176,6 +180,7 @@ $TextBoxMatrixGreen1 = New-Object System.Windows.Forms.TextBox -Property @{
     Text = ''
     Enabled = $False
     TabIndex = 4
+    Name = 'TextBoxMatrixGreen1'
 }
 $Form.Controls.Add($TextBoxMatrixGreen1)
 
@@ -185,6 +190,7 @@ $TextBoxMatrixGreen2 = New-Object System.Windows.Forms.TextBox -Property @{
     Text = ''
     Enabled = $False
     TabIndex = 5
+    Name = 'TextBoxMatrixGreen2'
 }
 $Form.Controls.Add($TextBoxMatrixGreen2)
 
@@ -193,6 +199,7 @@ $TextBoxMatrixBlue0 = New-Object System.Windows.Forms.TextBox -Property @{
     Size = New-Object System.Drawing.Size(50,22)
     Text = ''
     TabIndex = 3
+    Name = 'TextBoxMatrixBlue0'
 
     Add_TextChanged = ({
 
@@ -208,6 +215,7 @@ $TextBoxMatrixBlue1 = New-Object System.Windows.Forms.TextBox -Property @{
     Text = ''
     Enabled = $False
     TabIndex = 4
+    Name = 'TextBoxMatrixBlue1'
 }
 $Form.Controls.Add($TextBoxMatrixBlue1)
 
@@ -217,6 +225,7 @@ $TextBoxMatrixBlue2 = New-Object System.Windows.Forms.TextBox -Property @{
     Text = ''
     Enabled = $False
     TabIndex = 5
+    Name = 'TextBoxMatrixBlue2'
 }
 $Form.Controls.Add($TextBoxMatrixBlue2)
 
@@ -342,9 +351,9 @@ Function Format-Matrix {
         for ($i = 0; $i -lt 3; $i++){
 
             $MatrixColors[$i] /= 100
-            
+
             # write values back into input fields
-            $((Get-Variable -Name ('TextBoxMatrix' + $Color + $i)).value).Text = $MatrixColors[$i]
+            $Form.Controls['TextBoxMatrix' + $Color + $i].Text = $MatrixColors[$i]
             
         }
 
@@ -355,14 +364,14 @@ Function Format-Matrix {
         for ($i = 0; $i -lt 3; $i++){
             for ($j = 0; $j -lt 3; $j++){
 
-                if ([string]::IsNullOrWhiteSpace($((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text)){
+                if ([string]::IsNullOrWhiteSpace($Form.Controls['TextBoxMatrix' + $RGB[$i] + $i].Text)){
                         
                     $Incomplete = $True
                     $i = $j = 3
                     
                 } else {
 
-                    $Matrix.($RGB[$i]) += $((Get-Variable -Name ('TextBoxMatrix' + $RGB[$i] + $j)).value).Text + ' '
+                    $Matrix.($RGB[$i]) += $Form.Controls['TextBoxMatrix' + $RGB[$i] + $i].Text + ' '
                     $Incomplete = $False
                     
                 }
