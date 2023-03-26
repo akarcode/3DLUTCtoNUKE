@@ -16,6 +16,9 @@ It requires .NET 7 libraries to run it.
 
 #### Changelog
 
+1.0.4
+- small code simplification
+
 1.0.3
 - removed unnecessary loops.
 - reduced need for array in colormatrix.
