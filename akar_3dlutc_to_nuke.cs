@@ -154,7 +154,7 @@ namespace ThreeDLUTtoNUKE
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {  
-                // InitialDirectory = @"C:\Work\scripts\nuke\3dlut2nuke\",
+                InitialDirectory = @"C:\",
                 Title = "Select your Lightroom Template",
                 DefaultExt = "lrtemplate",
                 Filter = "Lightroom|*.lrtemplate",
