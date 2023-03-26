@@ -17,12 +17,12 @@ It requires .NET 7 libraries to run it.
 #### Changelog
 
 1.0.4
-- small code simplification
+- Small code simplification
 
 1.0.3
-- removed unnecessary loops.
-- reduced need for array in colormatrix.
-- minor code adjustments.
+- Removed unnecessary loops.
+- Reduced need for array in colormatrix.
+- Minor code adjustments.
 
 1.0.2
 - Added drag and drop functionality to the curves textbox.
