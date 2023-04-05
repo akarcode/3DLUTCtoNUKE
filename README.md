@@ -1,4 +1,4 @@
-# 3DLUTtoNUKE
+# 3D LUT Creator to NUKE
 
 ![3dlutc2nuke_104](https://user-images.githubusercontent.com/59408512/230012911-5c486ce7-4faf-4db2-af27-ab13dbef6cdd.png)
 
